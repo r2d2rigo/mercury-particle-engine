@@ -23,6 +23,8 @@ namespace Mercury.ParticleEngine.Renderers
         private readonly Buffer _constantsBuffer;
         private ShaderParameters _parameters;
         private SpriteVertex[] _spriteVertices;
+        private SamplerState _samplerState;
+        private BlendState[] _blendStates;
 
         private bool _enableFastFade;
         public bool EnableFastFade
@@ -68,6 +70,27 @@ namespace Mercury.ParticleEngine.Renderers
             int vertexCount = size * 4;
             int indexCount = size * 6;
             _textureLookup = textureLookup;
+
+            this._samplerState = new SamplerState(_device, new SamplerStateDescription()
+            {
+                Filter = Filter.MinMagMipLinear,
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
+                AddressW = TextureAddressMode.Wrap,
+                BorderColor = Color.Black,
+                ComparisonFunction = Comparison.Never,
+                MaximumAnisotropy = 16,
+                MipLodBias = 0,
+                MinimumLod = 0,
+                MaximumLod = 16,
+            });
+
+            this._blendStates = new BlendState[3];
+
+            this._blendStates[0] = CreateBlendState(BlendOperation.Add, BlendOption.InverseSourceAlpha);
+            this._blendStates[1] = CreateBlendState(BlendOperation.Add, BlendOption.One);
+            this._blendStates[2] = CreateBlendState(BlendOperation.ReverseSubtract, BlendOption.One);
+
             _vertexBuffer = new Buffer(_device, vertexCount * 4 * Utilities.SizeOf<SpriteVertex>(), ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, 0);
             _vertexBufferBinding = new VertexBufferBinding(this._vertexBuffer, Utilities.SizeOf<SpriteVertex>(), 0);
 
@@ -176,6 +199,7 @@ namespace Mercury.ParticleEngine.Renderers
 
                     _spriteVertices[offset + j].TexCoords.X = corner.X + 0.5f;
                     _spriteVertices[offset + j].TexCoords.Y = -corner.Y + 0.5f;
+                    _spriteVertices[offset + j].Color.A = (byte)(particle->Opacity * 255);
                 }
 
                 particleAddress = particleAddress + Particle.SizeInBytes;
@@ -187,7 +211,19 @@ namespace Mercury.ParticleEngine.Renderers
             this._context.UnmapSubresource(this._vertexBuffer, 0);
             dataStream.Dispose();
 
-            SetupBlend(emitter.BlendMode);
+            switch (emitter.BlendMode)
+            {
+                default:
+                case BlendMode.Alpha:
+                    _context.OutputMerger.SetBlendState(_blendStates[0]);
+                    break;
+                case BlendMode.Add:
+                    _context.OutputMerger.SetBlendState(_blendStates[1]);
+                    break;
+                case BlendMode.Subtract:
+                    _context.OutputMerger.SetBlendState(_blendStates[2]);
+                    break;
+            }
 
             this._context.InputAssembler.InputLayout = this._inputLayout;
             this._context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
@@ -196,54 +232,10 @@ namespace Mercury.ParticleEngine.Renderers
             this._context.VertexShader.SetConstantBuffer(0, this._constantsBuffer);
             this._context.VertexShader.Set(this._vertexShader);
             this._context.PixelShader.Set(this._pixelShader);
-            // this._context.PixelShader.SetSampler(0, sampler);
             this._context.PixelShader.SetShaderResource(0, this._textureLookup[emitter.TextureKey]);
-            this._context.PixelShader.SetSampler(0, new SamplerState(_device, new SamplerStateDescription()
-            {
-                Filter = Filter.MinMagMipLinear,
-                AddressU = TextureAddressMode.Wrap,
-                AddressV = TextureAddressMode.Wrap,
-                AddressW = TextureAddressMode.Wrap,
-                BorderColor = Color.Black,
-                ComparisonFunction = Comparison.Never,
-                MaximumAnisotropy = 16,
-                MipLodBias = 0,
-                MinimumLod = 0,
-                MaximumLod = 16,
-            }));
+            this._context.PixelShader.SetSampler(0, this._samplerState);
 
             this._context.DrawIndexed(emitter.ActiveParticles * 6, 0, 0);
-        }
-
-        private void SetupBlend(BlendMode blendMode)
-        {
-            //switch (blendMode)
-            //{
-            //    case BlendMode.Alpha:
-            //        _device.SetRenderState(RenderState.BlendOperation, BlendOperation.Add);
-            //        _device.SetRenderState(RenderState.BlendOperationAlpha, BlendOperation.Add);
-            //        _device.SetRenderState(RenderState.SourceBlendAlpha, Blend.SourceAlpha);
-            //        _device.SetRenderState(RenderState.DestinationBlendAlpha, Blend.InverseSourceAlpha);
-            //        _device.SetRenderState(RenderState.SourceBlend, Blend.SourceAlpha);
-            //        _device.SetRenderState(RenderState.DestinationBlend, Blend.InverseSourceAlpha);
-            //        return;
-            //    case BlendMode.Add:
-            //        _device.SetRenderState(RenderState.BlendOperation, BlendOperation.Add);
-            //        _device.SetRenderState(RenderState.BlendOperationAlpha, BlendOperation.Add);
-            //        _device.SetRenderState(RenderState.SourceBlendAlpha, Blend.SourceAlpha);
-            //        _device.SetRenderState(RenderState.DestinationBlendAlpha, Blend.InverseSourceAlpha);
-            //        _device.SetRenderState(RenderState.SourceBlend, Blend.SourceAlpha);
-            //        _device.SetRenderState(RenderState.DestinationBlend, Blend.One);
-            //        return;
-            //    case BlendMode.Subtract:
-            //        _device.SetRenderState(RenderState.BlendOperation, BlendOperation.ReverseSubtract);
-            //        _device.SetRenderState(RenderState.BlendOperationAlpha, BlendOperation.Add);
-            //        _device.SetRenderState(RenderState.SourceBlendAlpha, Blend.SourceAlpha);
-            //        _device.SetRenderState(RenderState.DestinationBlendAlpha, Blend.InverseSourceAlpha);
-            //        _device.SetRenderState(RenderState.SourceBlend, Blend.SourceAlpha);
-            //        _device.SetRenderState(RenderState.DestinationBlend, Blend.One);
-            //        return;
-            //}
         }
 
         public void Dispose()
@@ -268,6 +260,21 @@ namespace Mercury.ParticleEngine.Renderers
         ~PointSpriteRenderer()
         {
             Dispose(false);
+        }
+
+        private BlendState CreateBlendState(BlendOperation blendOperation, BlendOption destinationBlend)
+        {
+            var description = new BlendStateDescription();
+            description.RenderTarget[0] = new RenderTargetBlendDescription(true,
+                BlendOption.SourceAlpha,
+                destinationBlend,
+                blendOperation,
+                BlendOption.SourceAlpha,
+                BlendOption.InverseSourceAlpha,
+                BlendOperation.Add,
+                ColorWriteMaskFlags.All);
+
+            return new BlendState(_device, description);
         }
     }
 }
