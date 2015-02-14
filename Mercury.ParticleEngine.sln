@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.ParticleEngine.Core
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.ParticleEngine.SharpDX.Direct3D9", "Mercury.ParticleEngine.SharpDX.Direct3D9\Mercury.ParticleEngine.SharpDX.Direct3D9.csproj", "{ACA557D3-43A9-424F-A35A-4FB9C93FE4E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.ParticleEngine.SharpDX.Direct3D9.Sample", "Mercury.ParticleEngine.SharpDX.Direct3D9.Sample\Mercury.ParticleEngine.SharpDX.Direct3D9.Sample.csproj", "{A80CE58A-40BF-4766-89D2-3E81C5D9BC63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercury.ParticleEngine.SharpDX.Direct3D9.Sample", "Samples\Mercury.ParticleEngine.SharpDX.Direct3D9.Sample\Mercury.ParticleEngine.SharpDX.Direct3D9.Sample.csproj", "{A80CE58A-40BF-4766-89D2-3E81C5D9BC63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{94E592A5-F2EB-4E13-BD5A-98306A3C41A2}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{94E592
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{E71632DE-8428-42A9-A309-399C9A067169}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,5 +45,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A80CE58A-40BF-4766-89D2-3E81C5D9BC63} = {E71632DE-8428-42A9-A309-399C9A067169}
 	EndGlobalSection
 EndGlobal
