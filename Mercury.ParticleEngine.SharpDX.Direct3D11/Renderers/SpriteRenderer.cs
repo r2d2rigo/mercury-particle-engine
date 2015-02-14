@@ -164,6 +164,9 @@ namespace Mercury.ParticleEngine.Renderers
 
                     _spriteVertices[offset + j].Position.X = particle->Position[0] + (position.X * rotation.X) - (position.Y * rotation.Y);
                     _spriteVertices[offset + j].Position.Y = particle->Position[1] + (position.X * rotation.Y) + (position.Y * rotation.X);
+
+                    _spriteVertices[offset + j].TexCoords.X = corner.X + 0.5f;
+                    _spriteVertices[offset + j].TexCoords.Y = -corner.Y + 0.5f;
                 }
 
                 particleAddress = particleAddress + Particle.SizeInBytes;
@@ -186,6 +189,19 @@ namespace Mercury.ParticleEngine.Renderers
             this._context.PixelShader.Set(this._pixelShader);
             // this._context.PixelShader.SetSampler(0, sampler);
             this._context.PixelShader.SetShaderResource(0, this._textureLookup[emitter.TextureKey]);
+            this._context.PixelShader.SetSampler(0, new SamplerState(_device, new SamplerStateDescription()
+            {
+                Filter = Filter.MinMagMipLinear,
+                AddressU = TextureAddressMode.Wrap,
+                AddressV = TextureAddressMode.Wrap,
+                AddressW = TextureAddressMode.Wrap,
+                BorderColor = Color.Black,
+                ComparisonFunction = Comparison.Never,
+                MaximumAnisotropy = 16,
+                MipLodBias = 0,
+                MinimumLod = 0,
+                MaximumLod = 16,
+            }));
 
             this._context.DrawIndexed(emitter.ActiveParticles * 6, 0, 0);
         }
