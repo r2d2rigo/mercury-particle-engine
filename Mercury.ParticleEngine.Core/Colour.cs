@@ -6,7 +6,6 @@
     /// <summary>
     /// An immutable data structure representing a 24bit colour composed of separate hue, saturation and lightness channels.
     /// </summary>
-    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct Colour : IEquatable<Colour> {
         /// <summary>

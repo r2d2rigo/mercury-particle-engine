@@ -7,7 +7,6 @@
     /// <summary>
     /// Represents a closed interval of values.
     /// </summary>
-    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct Range : IEquatable<Range>, IFormattable {
         /// <summary>

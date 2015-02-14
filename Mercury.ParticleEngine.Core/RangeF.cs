@@ -7,7 +7,6 @@
     /// <summary>
     /// Represents a closed interval of floating point values.
     /// </summary>
-    [Serializable]
     [StructLayout(LayoutKind.Sequential)]
     public struct RangeF : IEquatable<RangeF>, IFormattable {
         /// <summary>
@@ -156,7 +155,7 @@
         /// else <c>false</c>.</returns>
         public bool Contains(float value) {
             if (Single.IsInfinity(value))
-                throw new ArgumentException("value is not finite", "value", new NotFiniteNumberException(value));
+                throw new ArgumentException("value is not finite", "value", new ArithmeticException(value.ToString()));
 
             return value >= X && value <= Y;
         }
