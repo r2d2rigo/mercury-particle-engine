@@ -77,13 +77,13 @@ namespace Mercury.ParticleEngine.Renderers
                 indices[offset + 2] = index + 2;
 
                 indices[offset + 3] = index;
-                indices[offset + 4] = index + 3;
-                indices[offset + 5] = index + 2;
+                indices[offset + 4] = index + 2;
+                indices[offset + 5] = index + 3;
 
-                _spriteVertices[index] = new SpriteVertex();
-                _spriteVertices[index + 1] = new SpriteVertex();
-                _spriteVertices[index + 2] = new SpriteVertex();
-                _spriteVertices[index + 3] = new SpriteVertex();
+                _spriteVertices[index].Color = Color.White;
+                _spriteVertices[index + 1].Color = Color.White;
+                _spriteVertices[index + 2].Color = Color.White;
+                _spriteVertices[index + 3].Color = Color.White;
             }
 
             _indexBuffer = Buffer.Create<int>(this._device, BindFlags.IndexBuffer, indices);
