@@ -42,5 +42,4 @@ PS_IN SpriteVertexShader(VS_IN input)
 float4 SpritePixelShader(PS_IN input) : SV_Target
 {
 	return Texture.Sample(TextureSampler, input.tex) * input.color;
-	// return input.color;
 }

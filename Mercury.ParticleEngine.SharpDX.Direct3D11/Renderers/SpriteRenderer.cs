@@ -8,6 +8,8 @@ namespace Mercury.ParticleEngine.Renderers
 {
     public class PointSpriteRenderer : System.IDisposable
     {
+        private static readonly Vector2[] CornerOffsets;
+
         private readonly Device _device;
         private readonly DeviceContext _context;
         private readonly int _size;
@@ -34,6 +36,11 @@ namespace Mercury.ParticleEngine.Renderers
                     _parameters.IsFastFadeEnabled = value;
                 }
             }
+        }
+
+        static PointSpriteRenderer()
+        {
+            CornerOffsets = new[] { new Vector2(-0.5f, -0.5f), new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, -0.5f) };
         }
 
         public PointSpriteRenderer(Device device, int size, IReadOnlyDictionary<string, ShaderResourceView> textureLookup)
@@ -80,10 +87,11 @@ namespace Mercury.ParticleEngine.Renderers
                 indices[offset + 4] = index + 2;
                 indices[offset + 5] = index + 3;
 
-                _spriteVertices[index].Color = Color.White;
-                _spriteVertices[index + 1].Color = Color.White;
-                _spriteVertices[index + 2].Color = Color.White;
-                _spriteVertices[index + 3].Color = Color.White;
+                for (int j = 0; j < 4; j++)
+                {
+                    _spriteVertices[index + j].Color = Color.White;
+                    _spriteVertices[index + j].TexCoords = new Vector2(CornerOffsets[j].X + 0.5f, -CornerOffsets[j].Y + 0.5f);
+                }
             }
 
             _indexBuffer = Buffer.Create<int>(this._device, BindFlags.IndexBuffer, indices);
@@ -145,8 +153,8 @@ namespace Mercury.ParticleEngine.Renderers
             //}
 
             System.IntPtr particleAddress = emitter.Buffer.NativePointer;
-
-            Vector2[] CornerOffsets = { new Vector2(-0.5f, -0.5f), new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, -0.5f) };
+            Vector2 rotation;
+            Vector2 position;
 
             for (int i = 0; i < emitter.ActiveParticles; i++)
             {
@@ -154,13 +162,14 @@ namespace Mercury.ParticleEngine.Renderers
 
                 Particle* particle = (Particle*)particleAddress;
 
-                var rotation = new Vector2((float)System.Math.Cos(particle->Rotation), (float)System.Math.Sin(particle->Rotation));
-                var halfSize = particle->Scale * 0.5f;
+                rotation.X = (float)System.Math.Cos(particle->Rotation);
+                rotation.Y = (float)System.Math.Sin(particle->Rotation);
 
                 for (int j = 0; j < 4; j++)
                 {
                     var corner = CornerOffsets[j];
-                    var position = new Vector2(corner.X * particle->Scale, corner.Y * particle->Scale);
+                    position.X = corner.X * particle->Scale;
+                    position.Y = corner.Y * particle->Scale;
 
                     _spriteVertices[offset + j].Position.X = particle->Position[0] + (position.X * rotation.X) - (position.Y * rotation.Y);
                     _spriteVertices[offset + j].Position.Y = particle->Position[1] + (position.X * rotation.Y) + (position.Y * rotation.X);
