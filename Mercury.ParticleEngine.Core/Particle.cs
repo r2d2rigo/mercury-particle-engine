@@ -13,6 +13,6 @@
         public float Rotation;
         public float Mass;
 
-        static public readonly int SizeInBytes = Marshal.SizeOf(typeof(Particle));
+        static public readonly int SizeInBytes = Marshal.SizeOf<Particle>();
     }
 }
