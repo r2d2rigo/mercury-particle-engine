@@ -25,6 +25,7 @@ namespace Mercury.ParticleEngine.Renderers
         private SpriteVertex[] _spriteVertices;
         private SamplerState _samplerState;
         private BlendState[] _blendStates;
+        private DepthStencilState _depthState;
 
         private bool _enableFastFade;
         public bool EnableFastFade
@@ -91,6 +92,11 @@ namespace Mercury.ParticleEngine.Renderers
             this._blendStates[1] = CreateBlendState(BlendOperation.Add, BlendOption.One);
             this._blendStates[2] = CreateBlendState(BlendOperation.ReverseSubtract, BlendOption.One);
 
+            this._depthState = new DepthStencilState(_device, new DepthStencilStateDescription()
+                {
+                    IsDepthEnabled = false,
+                });
+
             _vertexBuffer = new Buffer(_device, vertexCount * 4 * Utilities.SizeOf<SpriteVertex>(), ResourceUsage.Dynamic, BindFlags.VertexBuffer, CpuAccessFlags.Write, ResourceOptionFlags.None, 0);
             _vertexBufferBinding = new VertexBufferBinding(this._vertexBuffer, Utilities.SizeOf<SpriteVertex>(), 0);
 
@@ -112,7 +118,6 @@ namespace Mercury.ParticleEngine.Renderers
 
                 for (int j = 0; j < 4; j++)
                 {
-                    _spriteVertices[index + j].Color = Color.White;
                     _spriteVertices[index + j].TexCoords = new Vector2(CornerOffsets[j].X + 0.5f, -CornerOffsets[j].Y + 0.5f);
                 }
             }
@@ -121,10 +126,15 @@ namespace Mercury.ParticleEngine.Renderers
 
             var inputElements = new[]
             {
+                //new InputElement("POSITION", 0, SharpDX.DXGI.Format.R32G32_Float, 0, 0),
+                //new InputElement("COLOR", 0, SharpDX.DXGI.Format.R8G8B8A8_UNorm, 8, 0),
+                //new InputElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 12, 0),
+                //new InputElement("COLOR", 1, SharpDX.DXGI.Format.R32_Float, 20, 0),
+
                 new InputElement("POSITION", 0, SharpDX.DXGI.Format.R32G32_Float, 0, 0),
-                new InputElement("COLOR", 0, SharpDX.DXGI.Format.R8G8B8A8_UNorm, 8, 0),
-                new InputElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 12, 0),
-                new InputElement("COLOR", 1, SharpDX.DXGI.Format.R32_Float, 20, 0),
+                new InputElement("COLOR", 0, SharpDX.DXGI.Format.R32G32B32A32_Float, 8, 0),
+                new InputElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 24, 0),
+                new InputElement("COLOR", 1, SharpDX.DXGI.Format.R32_Float, 32, 0),
             };
 
             using (CompilationResult vsCompilation = ShaderBytecode.Compile(Resources.SpriteBatchShader, "SpriteVertexShader", "vs_4_0_level_9_1", ShaderFlags.None, EffectFlags.None))
@@ -199,7 +209,11 @@ namespace Mercury.ParticleEngine.Renderers
 
                     _spriteVertices[offset + j].TexCoords.X = corner.X + 0.5f;
                     _spriteVertices[offset + j].TexCoords.Y = -corner.Y + 0.5f;
-                    _spriteVertices[offset + j].Color.A = (byte)(particle->Opacity * 255);
+
+                    _spriteVertices[offset + j].Color.X = particle->Colour[0];
+                    _spriteVertices[offset + j].Color.Y = particle->Colour[1];
+                    _spriteVertices[offset + j].Color.Z = particle->Colour[2];
+                    _spriteVertices[offset + j].Color.W = particle->Opacity;
                 }
 
                 particleAddress = particleAddress + Particle.SizeInBytes;
@@ -224,6 +238,8 @@ namespace Mercury.ParticleEngine.Renderers
                     _context.OutputMerger.SetBlendState(_blendStates[2]);
                     break;
             }
+
+            _context.OutputMerger.SetDepthStencilState(_depthState);
 
             this._context.InputAssembler.InputLayout = this._inputLayout;
             this._context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;

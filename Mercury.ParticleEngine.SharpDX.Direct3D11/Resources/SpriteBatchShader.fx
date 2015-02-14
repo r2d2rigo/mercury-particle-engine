@@ -22,6 +22,22 @@ struct PS_IN
 	float2 tex : TEXCOORD;
 };
 
+float3 HueToRgb(in float hue)
+{
+	float r = abs(hue * 6 - 3) - 1;
+	float g = 2 - abs(hue * 6 - 2);
+	float b = 2 - abs(hue * 6 - 4);
+
+	return saturate(float3(r, g, b));
+}
+
+float3 HslToRgb(in float3 hsl)
+{
+	float3 rgb = HueToRgb(hsl.x / 360.0f);
+		float c = (1 - abs(2 * hsl.z - 1)) * hsl.y;
+
+	return (rgb - 0.5) * c + hsl.z;
+}
 
 PS_IN SpriteVertexShader(VS_IN input)
 {
@@ -29,7 +45,8 @@ PS_IN SpriteVertexShader(VS_IN input)
 
 	output.pos = mul(float4(input.pos, 0, 1), WVP);
 	output.tex = input.tex;
-	output.color = input.color;
+	output.color.xyz = HslToRgb(input.color.xyz);
+	output.color.a = input.color.a;
 
 	if (FastFade)
 	{

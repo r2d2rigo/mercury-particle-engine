@@ -7,7 +7,7 @@ namespace Mercury.ParticleEngine.Renderers
     internal struct SpriteVertex
     {
         public Vector2 Position;
-        public Color Color;
+        public Vector4 Color;
         public Vector2 TexCoords;
         public float Age;
     }
