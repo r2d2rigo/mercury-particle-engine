@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using SharpDX;
-using SharpDX.Direct3D11;
-using SharpDX.Windows;
-using Mercury.ParticleEngine.Modifiers;
+﻿using Mercury.ParticleEngine.Modifiers;
 using Mercury.ParticleEngine.Profiles;
 using Mercury.ParticleEngine.Renderers;
-using System.Windows.Input;
+using SharpDX;
 using SharpDX.Direct3D;
-using SharpDX.DXGI;
+using SharpDX.Direct3D11;
 using SharpDX.DirectInput;
+using SharpDX.DXGI;
+using SharpDX.Windows;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Mercury.ParticleEngine
 {
@@ -47,9 +46,9 @@ namespace Mercury.ParticleEngine
             };
 
             // Create Device and SwapChain
-            SharpDX.Direct3D11.Device device;
-            SharpDX.DXGI.SwapChain swapChain;
-            SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, desc, out device, out swapChain);
+            global::SharpDX.Direct3D11.Device device;
+            global::SharpDX.DXGI.SwapChain swapChain;
+            global::SharpDX.Direct3D11.Device.CreateWithSwapChain(DriverType.Hardware, DeviceCreationFlags.Debug, desc, out device, out swapChain);
             var context = device.ImmediateContext;
 
             // Ignore all windows events

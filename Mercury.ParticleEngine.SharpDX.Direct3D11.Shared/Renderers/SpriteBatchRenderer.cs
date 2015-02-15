@@ -131,16 +131,16 @@ namespace Mercury.ParticleEngine.Renderers
                 //new InputElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 12, 0),
                 //new InputElement("COLOR", 1, SharpDX.DXGI.Format.R32_Float, 20, 0),
 
-                new InputElement("POSITION", 0, SharpDX.DXGI.Format.R32G32_Float, 0, 0),
-                new InputElement("COLOR", 0, SharpDX.DXGI.Format.R32G32B32A32_Float, 8, 0),
-                new InputElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 24, 0),
-                new InputElement("COLOR", 1, SharpDX.DXGI.Format.R32_Float, 32, 0),
+                new InputElement("POSITION", 0, global::SharpDX.DXGI.Format.R32G32_Float, 0, 0),
+                new InputElement("COLOR", 0, global::SharpDX.DXGI.Format.R32G32B32A32_Float, 8, 0),
+                new InputElement("TEXCOORD", 0, global::SharpDX.DXGI.Format.R32G32_Float, 24, 0),
+                new InputElement("COLOR", 1, global::SharpDX.DXGI.Format.R32_Float, 32, 0),
             };
 
             using (CompilationResult vsCompilation = ShaderBytecode.Compile(Resources.SpriteBatchShader, "SpriteVertexShader", "vs_4_0_level_9_1", ShaderFlags.None, EffectFlags.None))
             {
                 this._vertexShader = new VertexShader(this._device, vsCompilation.Bytecode);
-                this._inputLayout = new InputLayout(this._device, ShaderSignature.GetInputSignature(vsCompilation.Bytecode), inputElements);
+                this._inputLayout = new InputLayout(this._device, vsCompilation.Bytecode, inputElements);
             }
 
             using (CompilationResult psCompilation = ShaderBytecode.Compile(Resources.SpriteBatchShader, "SpritePixelShader", "ps_4_0_level_9_1", ShaderFlags.None, EffectFlags.None))
@@ -244,7 +244,7 @@ namespace Mercury.ParticleEngine.Renderers
             this._context.InputAssembler.InputLayout = this._inputLayout;
             this._context.InputAssembler.PrimitiveTopology = PrimitiveTopology.TriangleList;
             this._context.InputAssembler.SetVertexBuffers(0, this._vertexBufferBinding);
-            this._context.InputAssembler.SetIndexBuffer(this._indexBuffer, SharpDX.DXGI.Format.R32_UInt, 0);
+            this._context.InputAssembler.SetIndexBuffer(this._indexBuffer, global::SharpDX.DXGI.Format.R32_UInt, 0);
             this._context.VertexShader.SetConstantBuffer(0, this._constantsBuffer);
             this._context.VertexShader.Set(this._vertexShader);
             this._context.PixelShader.Set(this._pixelShader);
