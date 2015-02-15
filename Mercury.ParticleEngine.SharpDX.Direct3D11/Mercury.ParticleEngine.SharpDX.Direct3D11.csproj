@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\ShaderParameters.cs" />
-    <Compile Include="Renderers\SpriteRenderer.cs" />
+    <Compile Include="Renderers\SpriteBatchRenderer.cs" />
     <Compile Include="Renderers\SpriteVertex.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

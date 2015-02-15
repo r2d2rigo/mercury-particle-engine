@@ -25,7 +25,7 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
         private Size2 worldSize;
         private Size2 renderSize;
         private ParticleEffect smokeEffect;
-        private PointSpriteRenderer renderer;
+        private SpriteBatchRenderer renderer;
 
         public MainPage()
         {
@@ -115,7 +115,7 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
                 { "Cloud",    new ShaderResourceView(context.D3DDevice, textureLookup["Cloud"]) },
             };
 
-            renderer = new PointSpriteRenderer(context.D3DDevice, 10000, textureResourceViews)
+            renderer = new SpriteBatchRenderer(context.D3DDevice, 10000, textureResourceViews)
             {
                 //EnableFastFade = true
             };

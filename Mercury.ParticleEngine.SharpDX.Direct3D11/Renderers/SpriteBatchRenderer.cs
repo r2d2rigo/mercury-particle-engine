@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Mercury.ParticleEngine.Renderers
 {
-    public class PointSpriteRenderer : System.IDisposable
+    public class SpriteBatchRenderer : System.IDisposable
     {
         private static readonly Vector2[] CornerOffsets;
 
@@ -41,17 +41,17 @@ namespace Mercury.ParticleEngine.Renderers
             }
         }
 
-        static PointSpriteRenderer()
+        static SpriteBatchRenderer()
         {
             CornerOffsets = new[] { new Vector2(-0.5f, -0.5f), new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, -0.5f) };
         }
 
-        public PointSpriteRenderer(Device device, int size, IReadOnlyDictionary<string, ShaderResourceView> textureLookup)
+        public SpriteBatchRenderer(Device device, int size, IReadOnlyDictionary<string, ShaderResourceView> textureLookup)
             : this(device, null, size, textureLookup)
         {
         }
 
-        public PointSpriteRenderer(Device device, DeviceContext context, int size, IReadOnlyDictionary<string, ShaderResourceView> textureLookup)
+        public SpriteBatchRenderer(Device device, DeviceContext context, int size, IReadOnlyDictionary<string, ShaderResourceView> textureLookup)
         {
             if (device == null)
                 throw new System.ArgumentNullException("device");
@@ -273,7 +273,7 @@ namespace Mercury.ParticleEngine.Renderers
             }
         }
 
-        ~PointSpriteRenderer()
+        ~SpriteBatchRenderer()
         {
             Dispose(false);
         }

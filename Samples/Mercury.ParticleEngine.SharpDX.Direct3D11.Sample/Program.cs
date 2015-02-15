@@ -247,7 +247,7 @@ namespace Mercury.ParticleEngine
                 { "Ring",     new ShaderResourceView(device, textureLookup["Ring"]) },
             };
 
-            var renderer = new PointSpriteRenderer(device, 1000000, textureResourceViews)
+            var renderer = new SpriteBatchRenderer(device, 1000000, textureResourceViews)
             {
                 //EnableFastFade = true
             };
