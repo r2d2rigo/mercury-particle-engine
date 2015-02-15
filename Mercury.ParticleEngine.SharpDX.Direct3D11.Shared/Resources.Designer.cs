@@ -67,7 +67,7 @@ namespace Mercury.ParticleEngine {
         ///
         ///cbuffer Parameters : register(b0)
         ///{
-        ///	float4x4 MatrixTransform	: packoffset(c0);
+        ///	float4x4 WVP : packoffset(c0);
         ///	bool FastFade : packoffset(c4.x);
         ///};
         ///
@@ -86,12 +86,10 @@ namespace Mercury.ParticleEngine {
         ///	float2 tex : TEXCOORD;
         ///};
         ///
-        ///
-        ///PS_IN SpriteVertexShader(VS_IN input)
+        ///float3 HueToRgb(in float hue)
         ///{
-        ///	PS_IN output = (PS_IN)0;
-        ///
-        ///	output. [rest of string was truncated]&quot;;.
+        ///	float r = abs(hue * 6 - 3) - 1;
+        ///	float g = 2 - abs(hue * 6 - [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string SpriteBatchShader {
             get {
