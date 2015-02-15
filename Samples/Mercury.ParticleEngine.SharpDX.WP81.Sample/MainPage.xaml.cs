@@ -26,6 +26,8 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
         private Size2 renderSize;
         private ParticleEffect smokeEffect;
         private SpriteBatchRenderer renderer;
+        private bool emit;
+        private Vector3 tapPosition;
 
         public MainPage()
         {
@@ -42,11 +44,34 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             this.SwapChainPanel.Loaded += SwapChainPanel_Loaded;
+            this.SwapChainPanel.ManipulationStarted += SwapChainPanel_ManipulationStarted;
+            this.SwapChainPanel.ManipulationDelta += SwapChainPanel_ManipulationDelta;
+            this.SwapChainPanel.ManipulationCompleted += SwapChainPanel_ManipulationCompleted;
+        }
+
+        void SwapChainPanel_ManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
+        {
+            emit = false;
+        }
+
+        void SwapChainPanel_ManipulationDelta(object sender, Windows.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs e)
+        {
+            emit = true;
+            tapPosition = new Vector3((float)e.Position.X, (float)e.Position.Y, 0);
+        }
+
+        void SwapChainPanel_ManipulationStarted(object sender, Windows.UI.Xaml.Input.ManipulationStartedRoutedEventArgs e)
+        {
+            emit = true;
+            tapPosition = new Vector3((float)e.Position.X, (float)e.Position.Y, 0);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             this.SwapChainPanel.Loaded -= SwapChainPanel_Loaded;
+            this.SwapChainPanel.ManipulationStarted -= SwapChainPanel_ManipulationStarted;
+            this.SwapChainPanel.ManipulationDelta -= SwapChainPanel_ManipulationDelta;
+            this.SwapChainPanel.ManipulationCompleted -= SwapChainPanel_ManipulationCompleted;
 
             base.OnNavigatedFrom(e);
         }
@@ -64,7 +89,7 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
             worldSize = new Size2((int)this.SwapChainPanel.RenderSize.Width, (int)this.SwapChainPanel.RenderSize.Height);
             renderSize = worldSize;
 
-            var smokeEffect = new ParticleEffect
+            smokeEffect = new ParticleEffect
             {
                 Emitters = new[] {
                     new Emitter(2000, TimeSpan.FromSeconds(3), Profile.Point()) {
@@ -140,21 +165,24 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
 
                 //var mouseMovementLine = new LineSegment(new Coordinate(previousMousePosition.X, previousMousePosition.Y), new Coordinate(mousePosition.X, mousePosition.Y));
 
+            if (emit)
+            {
+                smokeEffect.Trigger(new Coordinate(tapPosition.X, tapPosition.Y));
+            }
                 //if (RenderForm.MouseButtons.HasFlag(System.Windows.Forms.MouseButtons.Left))
                 //{
                 //    currentEffect.Trigger(mouseMovementLine);
                 //}
 
                 //updateTimer.Restart();
-                //smokeEffect.Update(frameTime);
+                smokeEffect.Update(0.01666f);
                 //sparkEffect.Update(frameTime);
                 //ringEffect.Update(frameTime);
                 //loadTestEffect.Update(frameTime);
                 //updateTimer.Stop();
 
                 context.D3DContext.ClearDepthStencilView(context.DepthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
-                context.D3DContext.ClearRenderTargetView(context.BackBufferView, Color.Black);
-                context.D3DContext.Rasterizer.SetViewport(new Viewport(0, 0, renderSize.Width, renderSize.Height, 0.0f, 1.0f));
+                context.D3DContext.ClearRenderTargetView(context.BackBufferView, Color.CornflowerBlue);
 
                 //renderTimer.Restart();
                 renderer.Render(smokeEffect, wvp);

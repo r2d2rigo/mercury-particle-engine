@@ -9,6 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <SwapChainPanel x:Name="SwapChainPanel" />
+        <SwapChainPanel x:Name="SwapChainPanel" ManipulationMode="All" />
     </Grid>
 </Page>
