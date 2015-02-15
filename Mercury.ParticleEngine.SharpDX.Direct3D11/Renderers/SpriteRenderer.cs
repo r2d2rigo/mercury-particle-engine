@@ -82,8 +82,8 @@ namespace Mercury.ParticleEngine.Renderers
                 ComparisonFunction = Comparison.Never,
                 MaximumAnisotropy = 16,
                 MipLodBias = 0,
-                MinimumLod = 0,
-                MaximumLod = 16,
+                MinimumLod = -float.MaxValue,
+                MaximumLod = float.MaxValue
             });
 
             this._blendStates = new BlendState[3];
