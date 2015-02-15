@@ -185,7 +185,7 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
 
                 context.D3DContext.OutputMerger.SetTargets(context.DepthStencilView, context.BackBufferView);
                 context.D3DContext.ClearDepthStencilView(context.DepthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
-                context.D3DContext.ClearRenderTargetView(context.BackBufferView, Color.CornflowerBlue);
+                context.D3DContext.ClearRenderTargetView(context.BackBufferView, Color.Black);
 
                 //renderTimer.Restart();
                 renderer.Render(smokeEffect, wvp);
