@@ -86,7 +86,7 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
 
         void context_DeviceReset(object sender, DeviceResetEventArgs e)
         {
-            worldSize = new Size2((int)this.SwapChainPanel.RenderSize.Width, (int)this.SwapChainPanel.RenderSize.Height);
+            worldSize = new Size2((int)context.BackBufferSize.Width, (int)context.BackBufferSize.Height);
             renderSize = worldSize;
 
             smokeEffect = new ParticleEffect
@@ -165,9 +165,11 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
 
                 //var mouseMovementLine = new LineSegment(new Coordinate(previousMousePosition.X, previousMousePosition.Y), new Coordinate(mousePosition.X, mousePosition.Y));
 
+
             if (emit)
             {
-                smokeEffect.Trigger(new Coordinate(tapPosition.X, tapPosition.Y));
+                var mousePosition = Vector3.Unproject(new Vector3(tapPosition.X, tapPosition.Y, 0f), 0, 0, renderSize.Width, renderSize.Height, 0f, 1f, wvp);
+                smokeEffect.Trigger(new Coordinate(mousePosition.X, mousePosition.Y));
             }
                 //if (RenderForm.MouseButtons.HasFlag(System.Windows.Forms.MouseButtons.Left))
                 //{
@@ -181,6 +183,7 @@ namespace Mercury.ParticleEngine.SharpDX.WP81.Sample
                 //loadTestEffect.Update(frameTime);
                 //updateTimer.Stop();
 
+                context.D3DContext.OutputMerger.SetTargets(context.DepthStencilView, context.BackBufferView);
                 context.D3DContext.ClearDepthStencilView(context.DepthStencilView, DepthStencilClearFlags.Depth, 1.0f, 0);
                 context.D3DContext.ClearRenderTargetView(context.BackBufferView, Color.CornflowerBlue);
 
